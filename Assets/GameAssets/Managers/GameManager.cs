@@ -70,7 +70,9 @@ public class GameManager
     void WinGame(int playerId)
     {
         gameEnded = true;
-        gameOverMenu.Show($"Winner is {PhotonNetwork.PlayerList[playerId].NickName}");
+        gameOverMenu.Show(
+            $"Winner is {PhotonNetwork.PlayerList[playerId - 1].NickName}"
+        );
     }
 
     void GoBackToMenu()
