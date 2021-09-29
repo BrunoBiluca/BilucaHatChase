@@ -541,6 +541,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4433794518143938444, guid: bee92c53df04613419652afe463d4ca2, type: 3}
+      propertyPath: m_text
+      value: Biluca Hat Hunters
+      objectReference: {fileID: 0}
     - target: {fileID: 6469491380449409783, guid: bee92c53df04613419652afe463d4ca2, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
