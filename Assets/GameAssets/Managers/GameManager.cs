@@ -25,7 +25,7 @@ public class GameManager
 
     public List<HatPlayerController> players;
 
-    private TimerV2 invincibleTimer;
+    private Timer invincibleTimer;
     private float hatHolderTime;
 
     void Start()
@@ -33,7 +33,7 @@ public class GameManager
         playerWithHat = 1;
         players = new List<HatPlayerController>();
 
-        invincibleTimer = new TimerV2(invincibleDuration);
+        invincibleTimer = new Timer(invincibleDuration);
 
         gameOverMenu.Setup("Go to Main Menu", GoBackToMenu);
         progressCircle.Setup(timeToWin);
