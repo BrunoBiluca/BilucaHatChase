@@ -1,6 +1,7 @@
 using Assets.UnityFoundation.Code.TimeUtils;
 using Photon.Pun;
 using Photon.Realtime;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -12,10 +13,19 @@ public class HatPlayerController : MonoBehaviourPunCallbacks
     [SerializeField] private float moveSpeed;
     [SerializeField] private float jumpForce;
 
+    [SerializeField] private float repulsionCooldown;
+    public float repulsionForce;
+    public float repulsionRadius;
+
+    [SerializeField] private CooldownIndicator repulsionCooldownIndicator;
+
     public Rigidbody rig;
     public Player photonPlayer;
 
     private GameObject hatObject;
+
+    private Timer repulsionSkillTimer;
+    public ParticleSystem repulsionFX;
 
     [PunRPC]
     public void Initialize(Player player)
@@ -34,6 +44,15 @@ public class HatPlayerController : MonoBehaviourPunCallbacks
     {
         rig = GetComponent<Rigidbody>();
         hatObject = transform.Find("hat").gameObject;
+
+        repulsionSkillTimer = new Timer(repulsionCooldown).Start();
+        repulsionFX = transform.Find("energy_explosion")
+            .GetComponent<ParticleSystem>();
+    }
+
+    private void Start()
+    {
+        repulsionCooldownIndicator.Setup(repulsionSkillTimer);
     }
 
     void Update()
@@ -43,6 +62,19 @@ public class HatPlayerController : MonoBehaviourPunCallbacks
         Move();
         if(Keyboard.current.spaceKey.wasPressedThisFrame)
             TryJump();
+
+        if(Keyboard.current.fKey.wasPressedThisFrame)
+            UseRepulsionSkill();
+    }
+
+    private void UseRepulsionSkill()
+    {
+        if(!repulsionSkillTimer.Completed)
+            return;
+
+        repulsionSkillTimer.Start();
+
+        GameManager.Instance.ApplyRepulsionForce(Id);
     }
 
     void Move()

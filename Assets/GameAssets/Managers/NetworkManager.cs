@@ -48,5 +48,6 @@ public class NetworkManager : MonoBehaviourPunCallbacksSingleton<NetworkManager>
     private void OnJoinedRoomEventInvoke() => OnJoinRoomEvent?.Invoke();
 
     [PunRPC]
-    public void ChangeScene(string sceneName) => PhotonNetwork.LoadLevel(sceneName);
+    public void ChangeScene(string sceneName)
+        => ((PhotonSceneFader)PhotonSceneFader.Instance).FadeIn(sceneName);
 }

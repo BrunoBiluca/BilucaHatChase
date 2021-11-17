@@ -2,6 +2,7 @@ using Assets.UnityFoundation.Code.TimeUtils;
 using Assets.UnityFoundation.UI.Menus.GameOverMenu;
 using Assets.UnityFoundation.UI.ProgressElements.ProgressCircle;
 using Photon.Pun;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -11,6 +12,8 @@ public class GameManager
 {
     [SerializeField] private GameOverMenu gameOverMenu;
     [SerializeField] private ProgressCircle progressCircle;
+
+    public CooldownIndicator RepulsionCooldownIndicator;
 
     [Header("Stats")]
     public bool gameEnded = false;
@@ -127,6 +130,51 @@ public class GameManager
         playerWithHat = id;
         hatHolderTime = 0f;
         invincibleTimer.Start();
+    }
+
+    public void ApplyRepulsionForce(int id)
+    {
+        photonView.RPC(
+            nameof(ApplyRepulsionForceRPC),
+            RpcTarget.All,
+            id
+        );
+    }
+
+    [PunRPC]
+    private void ApplyRepulsionForceRPC(int id)
+    {
+        StartCoroutine(RepulsionSkill(GetPlayer(id)));
+    }
+
+    private IEnumerator RepulsionSkill(HatPlayerController player)
+    {
+        player.repulsionFX.gameObject.SetActive(true);
+        player.repulsionFX.Play();
+
+        yield return new WaitForSeconds(1f);
+
+        var colliders = Physics.OverlapSphere(
+            player.transform.position, player.repulsionRadius
+        );
+        foreach(var hit in colliders)
+        {
+            if(hit.gameObject == player.gameObject)
+                continue;
+
+            if(!hit.TryGetComponent(out Rigidbody rg))
+                continue;
+
+            rg.AddForce(
+                (rg.position - player.transform.position).normalized 
+                * player.repulsionForce,
+                ForceMode.Impulse
+            );
+        }
+
+        yield return new WaitForSeconds(1f);
+
+        player.repulsionFX.gameObject.SetActive(false);
     }
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
