@@ -11,6 +11,9 @@ public class MainMenuManager : LobbyMenuManager
         NetworkManager.Instance.OnConnectedToMasterEvent
             += () => landingPanel.EnableButtons();
 
+        if(PhotonNetwork.IsConnected)
+            landingPanel.EnableButtons();
+
         NetworkManager.Instance.OnJoinRoomEvent += ClientConnectedHandle;
 
         NetworkManager.Instance.OnLeaveRoomEvent += ClientDisconnectedHandle;

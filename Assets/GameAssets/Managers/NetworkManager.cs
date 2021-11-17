@@ -1,5 +1,6 @@
 using Photon.Pun;
 using System;
+using UnityEngine;
 
 public class NetworkManager : MonoBehaviourPunCallbacksSingleton<NetworkManager>
 {
@@ -9,7 +10,8 @@ public class NetworkManager : MonoBehaviourPunCallbacksSingleton<NetworkManager>
 
     private void Start()
     {
-        PhotonNetwork.ConnectUsingSettings();
+        if(!PhotonNetwork.IsConnected)
+            PhotonNetwork.ConnectUsingSettings();
     }
     public void CreateRoom(string roomName)
     {
